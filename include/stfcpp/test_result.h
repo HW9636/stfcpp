@@ -12,12 +12,26 @@ namespace stfcpp
 		unsigned long long microseconds_taken;
 	};
 
-	void print_test_details(const test_result& results)
+	inline void print_test_details(const test_result& results)
 	{
 		logger::normal("Test results:");
 		logger::fine("\tTests passed: " + std::to_string(results.passed));
 		logger::error("\tTests failed: " + std::to_string(results.failed));
 		logger::normal("\tTests total: " + std::to_string(results.total));
 		logger::normal("\tTime taken: " + std::to_string(results.microseconds_taken) + " microseconds");
+	}
+
+	inline void print_suite_test_details(const std::vector<std::pair<std::string, test_result>>& results)
+	{
+		unsigned int total = (unsigned int)results.size(), printed = 0;
+		for (auto it = results.begin(); it != results.end(); ++it) {
+			std::stringstream ss;
+			ss << "Suite test results for '" << it->first << "' (Suite test " << ++printed << "/" << total << ")";
+			logger::normal(ss.str());
+			logger::fine("\tTests passed: " + std::to_string(it->second.passed));
+			logger::error("\tTests failed: " + std::to_string(it->second.failed));
+			logger::normal("\tTests total: " + std::to_string(it->second.total));
+			logger::normal("\tTime taken: " + std::to_string(it->second.microseconds_taken) + " microseconds");
+		}
 	}
 }

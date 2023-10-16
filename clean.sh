@@ -9,3 +9,7 @@ rm Makefile
 rm *.make
 rm -r *.xcodeproj
 rm -r *.xcworkspace
+rm *.vcxproj.user
+rm *.vcxproj
+rm *.sln
+rm *.vcxproj.filters

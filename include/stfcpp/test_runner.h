@@ -12,6 +12,7 @@
 #include <sstream>
 #include <atomic>
 #include <chrono>
+#include <memory>
 
 namespace stfcpp
 {
@@ -19,6 +20,42 @@ namespace stfcpp
 	{
 		SEQUENCE,
 		PARALLEL
+	};
+
+	class suite_test_runner
+	{
+	private:
+		static inline unsigned int s_suite_passed;
+		static inline unsigned int s_suite_failed;
+		static inline unsigned int s_suite_total;
+		static inline std::vector<std::pair<std::string, test_result>> s_suite_results;
+
+		static void test_suite(std::pair<std::string, std::shared_ptr<test_suite>> pair)
+		{
+			std::stringstream ss;
+			ss << "Testing suite '" << pair.first << "' (Suite " << (s_suite_passed + s_suite_failed + 1) << "/" << s_suite_total << ")";
+			logger::normal(ss.str());
+			test_result results = pair.second->run_tests();
+			s_suite_results.push_back(std::make_pair(pair.first, results));
+			
+		}
+	public:
+		static const std::vector<std::pair<std::string, test_result>>& run_suite_tests(RunMode mode = RunMode::SEQUENCE)
+		{
+			auto& suites = suite_test_registry::s_registered_test_suites;
+			s_suite_total = suites.size();
+			if (mode == RunMode::SEQUENCE)
+			{
+				std::for_each(suites.begin(), suites.end(), test_suite);
+			}
+			else if (mode == RunMode::PARALLEL)
+			{
+				logger::error("Parallel not implemented yet, defaulting to sequence.");
+				std::for_each(suites.begin(), suites.end(), test_suite);
+			}
+
+			return s_suite_results;
+		}
 	};
 
 	class basic_test_runner
@@ -80,10 +117,10 @@ namespace stfcpp
 
 			auto end = std::chrono::high_resolution_clock::now();
 			return test_result{
-				.passed = s_test_passed,
-				.failed = s_test_failed,
-				.total = s_test_total,
-				.microseconds_taken = static_cast<unsigned long long>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())
+				s_test_passed,
+				s_test_failed,
+				s_test_total,
+				static_cast<unsigned long long>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())
 			};
 		}
 		

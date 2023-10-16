@@ -27,7 +27,11 @@ STF_BASIC_TEST(test_basic_assert_onfail_2, []() {
 
 int main(int argc, char** argv)
 {
-	stfcpp::test_result results = stfcpp::basic_test_runner::run_tests();
+	// TODO: implement logging for parallel testing
+	stfcpp::test_result results = stfcpp::basic_test_runner::run_tests(stfcpp::RunMode::SEQUENCE);
 	stfcpp::print_test_details(results);
+
+	const auto& suite_results = stfcpp::suite_test_runner::run_suite_tests();
+	stfcpp::print_suite_test_details(suite_results);
 }
 #endif
