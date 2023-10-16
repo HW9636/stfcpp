@@ -9,5 +9,5 @@ Ensure you are using C++17 or later versions.
 
 ## Platforms
 
-Currently only supports windows
-
+Windows - Tested on Windows 11
+MacOS - Tested on Intel Mac
