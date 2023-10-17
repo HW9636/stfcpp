@@ -3,3 +3,4 @@
 /vender/
 /GenerateProjects.bat
 /*.user
+.DS_Store
