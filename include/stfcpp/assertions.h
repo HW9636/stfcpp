@@ -14,7 +14,7 @@ namespace stfcpp
     inline std::string __stf__internal_basic_assert_msg(const std::string& file, const int& line, const std::string& message, const T& expected, const T& actual)
     {
         std::stringstream ss;
-        ss << "Assertion failed at: " << file << ":" << line << " -  " << message << " (Expected: " << expected << ", Actual: " << actual << ")";
+        ss << "Assertion failed at: " << file << ":" << line << " - " << message << " (Expected: " << expected << ", Actual: " << actual << ")";
         return ss.str();
     }
 

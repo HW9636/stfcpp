@@ -14,47 +14,39 @@
 
 namespace stfcpp
 {
-
-
 	class suite_test_runner
 	{
 	private:
-        suite_test_runner() : s_suite_passed(0), s_suite_failed(0), s_suite_total(0)
-        {
-            
-        }
+        suite_test_runner() {}
         
-        unsigned int s_suite_passed;
-        unsigned int s_suite_failed;
-		unsigned int s_suite_total;
-		suite_test_results s_suite_results;
+		unsigned int m_suite_tested;
+		unsigned int m_suite_total;
+		suite_test_results m_suite_results;
 
         void test_suite(std::string name, std::shared_ptr<test_suite> test_suite)
 		{
 			std::stringstream ss;
-			ss << "Testing suite '" << name << "' (Suite " << (s_suite_passed + s_suite_failed + 1) << "/" << s_suite_total << ")";
+			ss << "Testing suite '" << name << "' (Suite " << ++m_suite_tested << "/" << m_suite_total << ")";
 			logger::normal(ss.str());
-			test_result results = test_suite->run_tests();
-			s_suite_results.push_back(std::make_pair(name, results));
+			m_suite_results.push_back(std::make_pair(name, test_suite->run_tests()));
 			
 		}
 	public:
         //const test_result& run_single_suite_test(const std::string& suite_name)
         
-        const std::vector<std::pair<std::string, test_result>>& run_suite_tests()
+        const suite_test_results& run_suite_tests()
 		{
-            s_suite_results.clear();
-            s_suite_total = static_cast<unsigned int>(suite_test_registry::get_instance().m_registered_test_suites.size());
-            s_suite_results.reserve(s_suite_total);
-			
+			m_suite_tested = 0;
+            m_suite_results.clear();
+            m_suite_total = static_cast<unsigned int>(suite_test_registry::get_instance().m_registered_test_suites.size());
+            m_suite_results.reserve(m_suite_total);
 
             for (const auto& test_entry : suite_test_registry::get_instance().m_registered_test_suites)
             {
                 test_suite(test_entry.first, test_entry.second);
             }
 			
-
-			return s_suite_results;
+			return m_suite_results;
 		}
         
         static suite_test_runner& get_instance()
@@ -67,51 +59,53 @@ namespace stfcpp
 	class basic_test_runner
 	{
 	private:
-		unsigned int s_test_passed;
-		unsigned int s_test_failed;
-		unsigned int s_test_total;
+		basic_test_runner() {}
+
+		unsigned int m_test_passed;
+		unsigned int m_test_failed;
+		unsigned int m_test_total;
 
         void test(std::string name, std::function<void()> function)
 		{
 			std::stringstream ss;
-			ss << "Testing test '" << name << "' (Test " << (s_test_passed + s_test_failed + 1) << "/" << s_test_total << ")";
+			ss << "Testing test '" << name << "' (Test " << (m_test_passed + m_test_failed + 1) << "/" << m_test_total << ")";
 			logger::normal(ss.str());
 			try
 			{
                 function();
 				logger::fine("\tTest passed!");
-				s_test_passed++;
+				m_test_passed++;
 			}
 			catch (const assertion_failed_exception& e)
 			{
 				std::stringstream error;
 				error << "\tTest failed - " << e.what();
 				logger::warn(error.str());
-				s_test_failed++;
+				m_test_failed++;
 			}
 			catch (const std::exception& e)
 			{
 				std::stringstream error;
 				error << "\tTest crashed - " << e.what();
 				logger::error(error.str());
-				s_test_failed++;
+				m_test_failed++;
 			}
 		}
 
 	public:
-        static basic_test_runner& get_instance()
+        inline static basic_test_runner& get_instance()
         {
             static basic_test_runner runner;
             return runner;
         }
 
                                             
-        test_result run_tests()
+        inline test_result run_tests()
 		{
 			auto start = std::chrono::high_resolution_clock::now();
-			s_test_total = static_cast<unsigned int>(basic_test_registry::get_instance().m_registered_tests.size());
-			s_test_passed = 0;
-			s_test_failed = 0;
+			m_test_total = static_cast<unsigned int>(basic_test_registry::get_instance().m_registered_tests.size());
+			m_test_passed = 0;
+			m_test_failed = 0;
 
             for (const auto& test_entry : basic_test_registry::get_instance().m_registered_tests)
             {
@@ -120,13 +114,17 @@ namespace stfcpp
     
 			auto end = std::chrono::high_resolution_clock::now();
 			return test_result{
-				s_test_passed,
-				s_test_failed,
-				s_test_total,
-				static_cast<unsigned long long>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())
+				m_test_passed,
+				m_test_failed,
+				m_test_total,
+				end - start
 			};
 		}
 		
+		inline void run_test(const std::string& test_name, std::function<void()> function) noexcept
+		{
+			test(test_name, function);
+		}
 	};
 }
 

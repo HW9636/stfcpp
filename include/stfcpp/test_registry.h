@@ -10,6 +10,9 @@
 
 namespace stfcpp
 {
+	using basic_test_entry = std::pair<std::string, std::function<void()>>;
+	using suite_test_entry = std::pair<std::string, std::shared_ptr<test_suite>>;
+
 	class suite_test_registry
 	{
 	public:
@@ -25,7 +28,7 @@ namespace stfcpp
 			return true;
 		}
 
-		std::vector<std::pair<std::string, std::shared_ptr<test_suite>>> m_registered_test_suites;
+		std::vector<suite_test_entry> m_registered_test_suites;
 	};
 
 	class basic_test_registry
@@ -43,6 +46,6 @@ namespace stfcpp
 			return true;
 		}
 
-		std::vector<std::pair<std::string, std::function<void()>>> m_registered_tests;
+		std::vector<basic_test_entry> m_registered_tests;
 	};
 }

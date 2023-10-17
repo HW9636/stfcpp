@@ -14,21 +14,22 @@ namespace stfcpp
 	class test_suite
 	{
 	public:
-		test_suite() : m_test_passed(0), m_test_failed(0), m_test_total(0)
-		{
-
-		}
+		test_suite() {}
 
 		test_result run_tests()
 		{
+			m_test_total = static_cast<unsigned int>(m_registered_tests.size());
 			auto start = std::chrono::high_resolution_clock::now();
-			std::for_each(m_registered_tests.begin(), m_registered_tests.end(), [this](const auto& pair) { test(pair); });
+			for (const auto& pair : m_registered_tests)
+			{
+				test(pair.first, pair.second);
+			}
 			auto end = std::chrono::high_resolution_clock::now();
 			return test_result{
 				m_test_passed,
 				m_test_failed,
 				m_test_total,
-				static_cast<unsigned long long>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count())
+				end - start
 			};
 		}
 
@@ -37,30 +38,23 @@ namespace stfcpp
 			m_registered_tests.push_back(std::make_pair(test_name, test_func));
 			return true;
 		}
-	
 
 		// Called before every test
-		virtual void setup()
-		{
-
-		}
+		virtual void setup() {}
 
 		// Called after every test
-		virtual void finish()
-		{
-
-		}
+		virtual void finish() {}
 
 	private:
-		void test(std::pair<std::string, std::function<void()>> pair)
+		void test(std::string test_name, std::function<void()> test_function)
 		{
 			std::stringstream ss;
-			ss << "\tTesting suite test '" << pair.first << "' (Test " << (m_test_passed + m_test_failed + 1) << "/" << m_test_total << ")";
+			ss << "\tTesting suite test '" << test_name << "' (Test " << (m_test_passed + m_test_failed + 1) << "/" << m_test_total << ")";
 			logger::normal(ss.str());
 			try
 			{
 				setup();
-				pair.second();
+				test_function();
 				finish();
 				logger::fine("\t\tTest passed!");
 				m_test_passed++;
