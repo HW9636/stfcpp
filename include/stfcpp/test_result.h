@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+#include <utility>
 #include "stf_log.h"
 
 namespace stfcpp
@@ -12,6 +14,8 @@ namespace stfcpp
 		unsigned long long microseconds_taken;
 	};
 
+    using suite_test_results = std::vector<std::pair<std::string, test_result>>;
+
 	inline void print_test_details(const test_result& results)
 	{
 		logger::normal("Test results:");
@@ -21,7 +25,7 @@ namespace stfcpp
 		logger::normal("\tTime taken: " + std::to_string(results.microseconds_taken) + " microseconds");
 	}
 
-	inline void print_suite_test_details(const std::vector<std::pair<std::string, test_result>>& results)
+	inline void print_suite_test_details(const suite_test_results& results)
 	{
 		unsigned int total = (unsigned int)results.size(), printed = 0;
 		for (auto it = results.begin(); it != results.end(); ++it) {

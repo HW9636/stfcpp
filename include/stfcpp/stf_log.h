@@ -21,7 +21,7 @@ namespace stfcpp
 	{
    
     private:
-        inline static void queue(const std::string& message, Color color) {
+        inline static void internal_log(const std::string& message, Color color) {
 #ifdef _WIN32
             HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
             CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
@@ -72,9 +72,9 @@ namespace stfcpp
         }
 
     public:
-        inline static void error(const std::string& message) { queue(message, Color::RED); }
-        inline static void warn(const std::string& message) { queue(message, Color::YELLOW); }
-        inline static void fine(const std::string& message) { queue(message, Color::GREEN); }
-        inline static void normal(const std::string& message) { queue(message, Color::NORMAL); }
+        inline static void error(const std::string& message) { internal_log(message, Color::RED); }
+        inline static void warn(const std::string& message) { internal_log(message, Color::YELLOW); }
+        inline static void fine(const std::string& message) { internal_log(message, Color::GREEN); }
+        inline static void normal(const std::string& message) { internal_log(message, Color::NORMAL); }
 	};
 }

@@ -1,12 +1,12 @@
 workspace "STFCPP"
     configurations {
-        "Debug",
-        "Release"
+        "BuildExamples",
+        "BuildTests"
     }
 
 project "STFCPP"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++14"
     kind "ConsoleApp"
 
     targetdir ("bin/%{cfg.architecture}/%{prj.name}")
@@ -20,7 +20,8 @@ project "STFCPP"
     files {
         "include/**.h",
         "examples/**.cpp",
-        "examples/**.hpp"
+        "examples/**.hpp",
+        "examples/**.h",
     }
 
     filter "system:windows"
@@ -35,18 +36,15 @@ project "STFCPP"
         architecture "x86_64"
         systemversion "latest"
 
-    filter "configurations:Debug"
-        symbols "On"
-        optimize "Off"
+    symbols "On"
+    optimize "Off"
 
+    filter "configurations:BuildTests"
         defines {
-            "STFCPP_BUILD_EXAMPLES"
-        }
+			"STFCPP_BUILD_TESTS"        
+		}
 
-    filter "configurations:Release"
-        optimize "On"
-        symbols "Off"
-
+    filter "configurations:BuildExamples"
         defines {
             "STFCPP_BUILD_EXAMPLES"
         }
