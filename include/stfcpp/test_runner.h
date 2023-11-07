@@ -129,7 +129,7 @@ namespace stfcpp
 }
 
 // Returns stfcpp::test_result, use stfcpp::print_test_details to print
-#define STF_RUN_BASIC_TESTS ::stfcpp::basic_test_runner::get_instance().run_tests()
+#define STF_RUN_BASIC_TESTS() ::stfcpp::basic_test_runner::get_instance().run_tests()
 
 // Returns stfcpp::suite_test_results, use stfcpp:print_suite_test_details to print
-#define STF_RUN_SUITE_TESTS ::stfcpp::suite_test_runner::get_instance().run_suite_tests()
+#define STF_RUN_SUITE_TESTS() ::stfcpp::suite_test_runner::get_instance().run_suite_tests()

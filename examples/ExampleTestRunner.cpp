@@ -27,10 +27,10 @@ STF_BASIC_TEST(test_basic_assert_onfail_2, []() {
 
 int main(int argc, char** argv)
 {
-    stfcpp::test_result results = STF_RUN_BASIC_TESTS;
+    stfcpp::test_result results = STF_RUN_BASIC_TESTS();
     stfcpp::print_test_details(results);
 
-    const auto& suite_results = STF_RUN_SUITE_TESTS;
+    const auto& suite_results = STF_RUN_SUITE_TESTS();
     stfcpp::print_suite_test_details(suite_results);
 }
 #endif

@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv)
 {
-    const auto& suite_results = STF_RUN_SUITE_TESTS;
+    const auto& suite_results = STF_RUN_SUITE_TESTS();
     stfcpp::print_suite_test_details(suite_results);
     
     // Benchmark
