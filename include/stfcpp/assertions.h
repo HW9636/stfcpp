@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <functional>
 
 #include "stf_log.h"
 #include "except.h"
@@ -35,7 +36,7 @@ namespace stfcpp
     }
 
 
-    using basic_assert_fail_func = void(*)();
+    using basic_assert_fail_func = std::function<void()>;
 
 	template<typename T>
 	inline void __basic_assert(const T& expected, const T& actual, const char* file, const int& line, const std::string& message = "Expected and actual values are different")
