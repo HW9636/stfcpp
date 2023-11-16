@@ -5,19 +5,40 @@
 #include <sstream>
 #include <functional>
 
+
+#ifdef STF_USE_CONCEPTS
+#include <concepts>
+#include <ostream>
+#endif
+
 #include "stf_log.h"
 #include "except.h"
 
 namespace stfcpp
 {
-
     template<typename T>
     inline std::string __stf__internal_basic_assert_msg(const std::string& file, const int& line, const std::string& message, const T& expected, const T& actual)
+    {
+        std::stringstream ss;
+        ss << "Assertion failed at: " << file << ":" << line << " - " << message;
+        return ss.str();
+    }
+
+#ifdef STF_USE_CONCEPTS
+    template<typename T>
+    concept Streamable = requires(T t, std::ostream & os) {
+        { os << t } -> std::convertible_to<std::ostream&>;
+    };
+    
+
+    template<Streamable T>
+inline std::string __stf__internal_basic_assert_msg(const std::string& file, const int& line, const std::string& message, const T& expected, const T& actual)
     {
         std::stringstream ss;
         ss << "Assertion failed at: " << file << ":" << line << " - " << message << " (Expected: " << expected << ", Actual: " << actual << ")";
         return ss.str();
     }
+#endif
 
     template<typename T>
     inline std::string __stf_basic_assert_msg(const std::string& file, const int& line, const std::string& message, const T& expected, const T& actual);
